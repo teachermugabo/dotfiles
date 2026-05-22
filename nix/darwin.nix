@@ -5,7 +5,7 @@
   home.packages = with pkgs; [
     # macOS-specific tools (GUI apps installed via brew below)
     uv  # For installing ty (Python type checker not yet in nixpkgs)
-    # nodejs  # includes npm
+    nodejs  # includes npm
     tmux
   ];
 
@@ -33,11 +33,12 @@
 
   # Clone work repos if absent
   home.activation.cloneRepos = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    export GIT_SSH_COMMAND=/usr/bin/ssh
     clone_if_absent() {
       local dir="$1" url="$2"
       if [ ! -d "$dir" ]; then
         mkdir -p "$(dirname "$dir")"
-        git clone "$url" "$dir"
+        ${pkgs.git}/bin/git clone "$url" "$dir"
       fi
     }
 
@@ -47,6 +48,40 @@
 
     # Convenience symlink: ~/classroom → desmos-classroom repo
     ln -sfn "$HOME/src/amplify-education/desmos-classroom" "$HOME/classroom"
+  '';
+
+  # Clone claude-config and symlink its top-level entries into ~/.claude/
+  # Existing files in ~/.claude/ that collide are backed up to .bak.<timestamp>.
+  home.activation.setupClaudeConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    export GIT_SSH_COMMAND=/usr/bin/ssh
+    CLAUDE_CONFIG_DIR="$HOME/src/claude-config"
+    CLAUDE_HOME="$HOME/.claude"
+
+    if [ ! -d "$CLAUDE_CONFIG_DIR/.git" ]; then
+      mkdir -p "$(dirname "$CLAUDE_CONFIG_DIR")"
+      ${pkgs.git}/bin/git clone "git@github.com:teachermugabo/claude-config.git" "$CLAUDE_CONFIG_DIR"
+    fi
+
+    mkdir -p "$CLAUDE_HOME"
+
+    for src in "$CLAUDE_CONFIG_DIR"/* "$CLAUDE_CONFIG_DIR"/.[!.]*; do
+      [ -e "$src" ] || continue
+      name="$(basename "$src")"
+      [ "$name" = ".git" ] && continue
+      target="$CLAUDE_HOME/$name"
+
+      if [ -L "$target" ] && [ "$(readlink "$target")" = "$src" ]; then
+        continue
+      fi
+
+      if [ -e "$target" ] || [ -L "$target" ]; then
+        backup="$target.bak.$(date +%Y%m%d%H%M%S)"
+        echo "claude-config: backing up $name -> $(basename "$backup")"
+        mv "$target" "$backup"
+      fi
+
+      ln -sfn "$src" "$target"
+    done
   '';
 
   # Hammerspoon config (macOS-only, uses ~/.hammerspoon not XDG)
