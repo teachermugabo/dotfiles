@@ -40,6 +40,10 @@
   programs.git = {
     enable = true;
     settings = {
+      user = {
+        name = "T. Mugabo Uwilingiyimana";
+        email = "955064+teachermugabo@users.noreply.github.com";
+      };
       alias = {
         co = "checkout";
       };
