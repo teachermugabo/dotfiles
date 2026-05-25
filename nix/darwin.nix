@@ -92,4 +92,10 @@
 
   # Ghostty config (macOS-only terminal)
   xdg.configFile."ghostty".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/ghostty";
+
+  # Git commit signing via 1Password's SSH agent (macOS-specific signer path)
+  programs.git.signing = {
+    signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+    key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFMTlk4HHjo5fkezjUKJXYXabEr8ZonJ/dcj4vG/i4AD";
+  };
 }

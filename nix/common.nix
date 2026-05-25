@@ -51,6 +51,10 @@
         autoSetupRemote = true;
       };
     };
+    signing = {
+      format = "ssh";
+      signByDefault = true;
+    };
   };
 
   # Fish shell
