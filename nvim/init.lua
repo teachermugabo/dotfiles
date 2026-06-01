@@ -202,7 +202,27 @@ vim.api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { noremap = true })
 vim.api.nvim_set_keymap("n", "[j", "<C-O>", { noremap = true })
 vim.api.nvim_set_keymap("n", "]j", "<C-I>", { noremap = true })
 
--- Jump through jump list until buffer changes
+-- git-blame.nvim
+-- yank (copy to clipboard)
+-- Mnemonics:
+-- verbs: `y` = yank, `o` = open
+-- nouns: `s`=SHA, `c`=commit URL, `p`=PR URL, `f`=file URL
+-- alternative: use B for GitBlame + noun (e.g. Bs for grab SHA)
+vim.keymap.set('n', '<leader>ys', ':GitBlameCopySHA<CR>', { desc = 'Blame: yank SHA' })
+vim.keymap.set('n', '<leader>yc', ':GitBlameCopyCommitURL<CR>', { desc = 'Blame: yank commit URL' })
+vim.keymap.set('n', '<leader>yp', ':GitBlameCopyPRURL<CR>', { desc = 'Blame: yank PR URL' })
+vim.keymap.set('n', '<leader>yf', ':GitBlameCopyFileURL<CR>', { desc = 'Blame: yank file URL' })
+-- open in default browser (GitHub)
+vim.keymap.set('n', '<leader>oc', ':GitBlameOpenCommitURL<CR>', { desc = 'Blame: open commit in browser' })
+vim.keymap.set('n', '<leader>of', ':GitBlameOpenFileURL<CR>', { desc = 'Blame: open file in browser' })
+
+-- yank current file path / contents
+vim.keymap.set('n', '<leader>ya', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end,
+  { desc = 'Yank absolute path' })
+vim.keymap.set('n', '<leader>yr', function() vim.fn.setreg('+', vim.fn.expand('%')) end, { desc = 'Yank relative path' })
+vim.keymap.set('n', '<leader>yb', ':%y+<CR>', { desc = 'Yank buffer contents' })
+
+-- Jump thrcugh jump list until buffer changes
 local function jump_until_buffer_changes(direction)
   local current_buf = vim.api.nvim_get_current_buf()
   local max_attempts = 100 -- Prevent infinite loops

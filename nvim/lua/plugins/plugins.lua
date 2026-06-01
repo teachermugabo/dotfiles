@@ -42,6 +42,17 @@ return {
       })
     end
   },
+  {
+    "f-person/git-blame.nvim",
+    -- load the plugin at startup
+    event = "VeryLazy",
+    opts = {
+      enabled = true,
+      message_template = " <sha> • <date> • <author>   (<summary>) ",
+      date_format = "%m/%d/%y",
+      virtual_text_column = 1,
+    },
+  },
   -- {
   --   "sindrets/diffview.nvim",
   --   dependencies = { "nvim-tree/nvim-web-devicons" },
