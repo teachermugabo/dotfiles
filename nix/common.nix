@@ -44,8 +44,11 @@
         name = "T. Mugabo Uwilingiyimana";
         email = "955064+teachermugabo@users.noreply.github.com";
       };
-      alias = {
-        co = "checkout";
+      # alias = {
+      #   co = "checkout";
+      # };
+      pull = {
+        rebase = true;
       };
       push = {
         autoSetupRemote = true;
