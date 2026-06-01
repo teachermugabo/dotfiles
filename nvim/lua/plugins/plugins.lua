@@ -1069,6 +1069,11 @@ return {
         install_dir = vim.fn.stdpath('data') .. '/site'
       })
 
+      require("nvim-treesitter").install({
+        "lua", "typescript", "tsx", "javascript",
+        "json", "yaml", "html", "css", "rust", "bash", "markdown",
+      })
+
       -- Enable treesitter highlighting for these filetypes
       local ts_filetypes = {
         "lua", "typescript", "tsx", "javascript", "typescriptreact", "javascriptreact",
@@ -1083,7 +1088,10 @@ return {
           if ok and stats and stats.size > max_filesize then
             return
           end
-          vim.treesitter.start()
+          local ok, err = pcall(vim.treesitter.start)
+          if not ok and not tostring(err):match("Parser could not be created") then
+            vim.notify("treesitter: " .. tostring(err), vim.log.levels.WARN)
+          end
         end,
       })
     end
