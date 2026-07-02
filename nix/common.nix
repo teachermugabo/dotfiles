@@ -17,11 +17,12 @@
     ripgrep
     fd
     fzf
+    fzf-git # junegunn/fzf-git.sh
     delta  # git-delta
     gh     # GitHub CLI
     rustup
     tree-sitter
-    jujutsu  # jj version control
+    # jujutsu  # jj version control
 
     # Language servers
     lua-language-server
