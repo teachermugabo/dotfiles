@@ -515,6 +515,8 @@ return {
         },
       }
       vim.cmd("colorscheme flow")
+      vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#1c1c1c" })
+      vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#888888", bg = "#1c1c1c" })
     end
   },
   -- {
@@ -607,7 +609,7 @@ return {
         end
 
         -- LSP actions
-        buf_set_keymap("n", "<leader>k", vim.lsp.buf.hover)
+        buf_set_keymap("n", "<leader>k", function() vim.lsp.buf.hover({ border = "rounded" }) end)
         buf_set_keymap("n", "gd", vim.lsp.buf.definition)
         buf_set_keymap("n", "gD", vim.lsp.buf.type_definition)
         buf_set_keymap("n", "gi", vim.lsp.buf.implementation)
@@ -617,7 +619,7 @@ return {
         buf_set_keymap("n", "<leader>x", [[:FzfLua lsp_code_actions<CR>]])
 
         -- Signature help
-        buf_set_keymap("i", "<C-s>", vim.lsp.buf.signature_help)
+        buf_set_keymap("i", "<C-s>", function() vim.lsp.buf.signature_help({ border = "rounded" }) end)
 
         -- Diagnostics
         buf_set_keymap("n", "<leader>d", vim.diagnostic.setqflist)
@@ -1178,12 +1180,12 @@ return {
     config = function(_, opts)
       require("which-key").setup(opts)
       -- fix contrast for flow.nvim theme
-      vim.api.nvim_set_hl(0, "WhichKey", { fg = "#e2e2e5" })           -- key text
-      vim.api.nvim_set_hl(0, "WhichKeyDesc", { fg = "#b4b4b8" })       -- description text
-      vim.api.nvim_set_hl(0, "WhichKeyGroup", { fg = "#78a9ff" })      -- group name (+prefix)
-      vim.api.nvim_set_hl(0, "WhichKeySeparator", { fg = "#6e6e6e" })  -- separator (→)
-      vim.api.nvim_set_hl(0, "WhichKeyNormal", { bg = "#1a1a2e" })     -- popup background
-      vim.api.nvim_set_hl(0, "WhichKeyBorder", { fg = "#555555" })     -- border
+      vim.api.nvim_set_hl(0, "WhichKey", { fg = "#e2e2e5" })          -- key text
+      vim.api.nvim_set_hl(0, "WhichKeyDesc", { fg = "#b4b4b8" })      -- description text
+      vim.api.nvim_set_hl(0, "WhichKeyGroup", { fg = "#78a9ff" })     -- group name (+prefix)
+      vim.api.nvim_set_hl(0, "WhichKeySeparator", { fg = "#6e6e6e" }) -- separator (→)
+      vim.api.nvim_set_hl(0, "WhichKeyNormal", { bg = "#1a1a2e" })    -- popup background
+      vim.api.nvim_set_hl(0, "WhichKeyBorder", { fg = "#555555" })    -- border
     end,
     opts = {
       -- preset: "classic" (full-width bottom bar, no border)
