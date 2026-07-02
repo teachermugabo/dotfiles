@@ -28,6 +28,12 @@ return {
         sidebarPosition = "left",
         editPrediction = magenta_config.editPrediction,
         chimeVolume = 0,
+        autoContext = {
+          "context.md",
+          "claude.md",
+          ".magenta/*.md",
+          vim.fn.expand("~/src/claude-config/CLAUDE.md")
+        },
         -- mcpServers = {
         --   -- Hub = {
         --   --   url = "http://localhost:37373/mcp"
