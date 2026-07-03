@@ -17,11 +17,11 @@
     ripgrep
     fd
     fzf
-    fzf-git # junegunn/fzf-git.sh
     delta  # git-delta
     gh     # GitHub CLI
     rustup
     tree-sitter
+    git    # needed for fzf-git.sh
     # jujutsu  # jj version control
 
     # Language servers
@@ -61,25 +61,73 @@
     };
   };
 
-  # Fish shell
-  programs.fish = {
+  # Zsh shell with oh-my-zsh
+  # NOTE: Sensitive environment variables (PIP_INDEX_URL, UV_INDEX_URL, SSH_AUTH_SOCK,
+  # AWS_PROFILE, DC_SID) are intentionally kept in ~/.zshrc and excluded from version control.
+  # They remain in your shell config and are sourced at startup.
+  # See Task #1 (Audit and migrate environment variables to nix safely) for future nix-secrets strategy.
+  programs.zsh = {
     enable = true;
+    oh-my-zsh = {
+      enable = true;
+      theme = "robbyrussell";
+      plugins = [
+        "git"
+        "fzf"
+        "history-substring-search"
+        "colored-man-pages"
+      ];
+    };
+
+    # External plugins (zsh-autosuggestions and zsh-syntax-highlighting)
     plugins = [
       {
-        name = "pure";
-        src = pkgs.fishPlugins.pure.src;
+        name = "zsh-autosuggestions";
+        src = pkgs.zsh-autosuggestions;
       }
       {
-        name = "plugin-git";
-        src = pkgs.fishPlugins.plugin-git.src;
+        name = "zsh-syntax-highlighting";
+        src = pkgs.zsh-syntax-highlighting;
       }
     ];
+
+    initExtra = ''
+      # pyenv initialization
+      eval "$(pyenv init - zsh)"
+
+      # Override gco: fuzzy select without args, git checkout with args
+      unalias gco 2>/dev/null
+      gco() {
+        if [ $# -eq 0 ]; then
+          # No args: fuzzy select branch with piped git branch | fzf
+          git checkout "$(git branch | fzf | sed 's/^[* ] //')"
+        else
+          # With args: use git checkout (what OMZ's gco was aliased to)
+          git checkout "$@"
+        fi
+      }
+
+      # Source local sensitive variables (not in version control)
+      [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+    '';
+
+    # Environment variables (safe, static ones)
+    sessionVariables = {
+      EDITOR = "nvim";
+
+      # Python build dependencies (pyenv + sqlite/tcl-tk)
+      LDFLAGS = "-L/opt/homebrew/opt/sqlite/lib -L/opt/homebrew/opt/tcl-tk@8/lib";
+      CPPFLAGS = "-I/opt/homebrew/opt/sqlite/include -I/opt/homebrew/opt/tcl-tk@8/include";
+      PKG_CONFIG_PATH = "/opt/homebrew/opt/sqlite/lib/pkgconfig:/opt/homebrew/opt/tcl-tk@8/lib/pkgconfig";
+      PYTHON_CONFIGURE_OPTS = "--with-tcltk-includes='-I/opt/homebrew/opt/tcl-tk@8/include' --with-tcltk-libs='-L/opt/homebrew/opt/tcl-tk@8/lib -ltcl8.6 -ltk8.6'";
+      PYTHON_BUILD_HOMEBREW_OPENSSL_FORMULA = "openssl@3";
+    };
   };
 
-  # Starship prompt (supports git + jj via custom module)
+  # Starship prompt (supports zsh)
   programs.starship = {
     enable = true;
-    enableFishIntegration = true;
+    enableZshIntegration = true;
   };
 
   # Neovim configuration
@@ -114,8 +162,6 @@
   #   ln -sfn "${dotfilesDir}/magenta-skills/browser" "$HOME/.claude/skills/browser"
   # '';
 
-  # Prevent rustup from creating a broken fish config (nix manages PATH)
-  home.file.".config/fish/conf.d/rustup.fish".text = "";
 
   # Clone magenta.nvim if it doesn't exist
   home.activation.cloneMagenta = lib.hm.dag.entryAfter ["writeBoundary"] ''
