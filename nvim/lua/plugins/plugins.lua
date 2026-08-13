@@ -76,6 +76,14 @@ return {
   --   opts = {}
   -- },
   {
+    "folke/zen-mode.nvim",
+    cmd = "ZenMode",
+    keys = {
+      { "<leader>z", "<cmd>ZenMode<cr>", desc = "Zen Mode" }
+    },
+    opts = { window = { width = 80 } },
+  },
+  {
     "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
