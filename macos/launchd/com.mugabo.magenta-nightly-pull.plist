@@ -7,7 +7,7 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/mugabo/bin/magenta-nightly-pull.sh</string>
+        <string>/Users/mugabo/src/dotfiles/scripts/magenta-nightly-pull.sh</string>
     </array>
 
     <key>StartCalendarInterval</key>
