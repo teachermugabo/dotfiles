@@ -14,6 +14,10 @@ local function show_virtual_lines_until_next_move()
 end
 
 
+-- documenting some defaults:
+-- fzf-lua/defaults has `alt-q` for sending selected search results to quickfix (use Tab to select search results)
+
+
 return {
   {
     "dlants/magenta.nvim",
