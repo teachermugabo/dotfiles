@@ -1291,6 +1291,8 @@ Example configuration:
 | `%`                   | Jump to matching bracket         |
 | `]f` / `[f`           | Next/previous function           |
 | `]a` / `[a`           | Next/previous parameter          |
+| `]]` / `[[`           | Next/previous markdown header    |
+| `gO`                  | Markdown table-of-contents       |
 | `/` / `?`             | Search forward/backward          |
 | `*` / `#`             | Search word under cursor         |
 | `f` / `F` / `t` / `T` | Find character on line           |
@@ -1398,6 +1400,22 @@ When editing `.md` or `.txt` files, navigation becomes **visual-line aware**:
 - No need to think about line breaks
 
 **Use case:** Writing documentation, README files, notes.
+
+### Header Navigation
+
+Neovim's built-in markdown ftplugin binds three treesitter-aware header keymaps in any `.md` buffer:
+
+| Key  | Action                                              |
+| ---- | --------------------------------------------------- |
+| `]]` | Jump to next header                                 |
+| `[[` | Jump to previous header                             |
+| `gO` | Open table-of-contents outline in the location list |
+
+The parser distinguishes real ATX/Setext headings from `#` characters inside code fences — no regex false matches. Counts work: `3]]` skips three headers forward.
+
+**`gO` workflow:** press `gO` → location list opens with every heading indented by level → `j` / `k` to navigate → `<Enter>` jumps to the heading → `:lclose` dismisses.
+
+**Gotcha:** it's capital letter `O` (`Shift+o`), not digit zero.
 
 ---
 
